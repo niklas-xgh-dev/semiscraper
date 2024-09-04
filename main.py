@@ -6,18 +6,32 @@ import random
 from dotenv import load_dotenv
 from typing import Dict, List, Optional, Callable
 
-def load_config() -> Dict[str, str]:
+def load_config(url_key: str, suffix_key: str) -> Dict[str, str]:
     load_dotenv()
     return {
-        'base_url': os.getenv('urltwo'),
-        'pagination_suffix': os.getenv('urltwo_pagination_suffix')
+        'base_url': os.getenv(url_key),
+        'pagination_suffix': os.getenv(suffix_key)
     }
 
 def create_session() -> requests.Session:
     session = requests.Session()
     session.headers.update({
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+        'Accept-Encoding': 'gzip, deflate, br, zstd',
+        'Accept-Language': 'en,en-US;q=0.9,de-DE;q=0.8,de;q=0.7,fr-FR;q=0.6,fr;q=0.5,es-ES;q=0.4,es;q=0.3',
+        'Cache-Control': 'max-age=0',
+        'DNT': '1',
+        'Sec-Ch-Ua': '"Chromium";v="128", "Not;A=Brand";v="24", "Google Chrome";v="128"',
+        'Sec-Ch-Ua-Mobile': '?0',
+        'Sec-Ch-Ua-Platform': '"macOS"',
+        'Sec-Fetch-Dest': 'document',
+        'Sec-Fetch-Mode': 'navigate',
+        'Sec-Fetch-Site': 'none',
+        'Sec-Fetch-User': '?1',
+        'Upgrade-Insecure-Requests': '1',
     })
+    
     return session
 
 def fetch_page(session: requests.Session, url: str) -> Optional[str]:
@@ -33,7 +47,7 @@ def scrape_all_pages(
     session: requests.Session, 
     config: Dict[str, str], 
     scrape_page_func: Callable[[str], List[Dict[str, str]]], 
-    max_pages: int = 18
+    max_pages: int = 4
 ) -> List[Dict[str, str]]:
     all_products = []
     for page in range(1, max_pages + 1):
@@ -59,13 +73,17 @@ def save_to_csv(data: List[Dict[str, str]], filename: str) -> None:
     df.to_csv(filename, index=False)
     print(f"Data saved to {filename}")
 
-def main(scraper_module):
-    config = load_config()
+def main(scraper_module, url_key: str, suffix_key: str):
+    config = load_config(url_key, suffix_key)
     session = create_session()
     products = scrape_all_pages(session, config, scraper_module.scrape_page)
     save_to_csv(products, f"{scraper_module.__name__.split('_')[0]}_products.csv")
 
 if __name__ == "__main__":
-    # Import the specific scraper module here
+    # Import the specific scraper modules here
     import urltwo_scraper
-    main(urltwo_scraper)
+    import urlthree_scraper
+
+    # Run both scrapers
+    main(urltwo_scraper, 'urltwo', 'urltwo_pagination_suffix')
+    main(urlthree_scraper, 'urlthree', 'urlthree_pagination_suffix')
