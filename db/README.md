@@ -3,7 +3,6 @@
 ```mermaid
 erDiagram
     PRODUCTS ||--o{ PRODUCT_MARKETPLACE : has
-    MARKETPLACES ||--o{ PRODUCT_MARKETPLACE : has
     PRODUCT_MARKETPLACE ||--o{ PRODUCT_HISTORY : tracks
 
     PRODUCTS {
@@ -17,15 +16,10 @@ erDiagram
         string packaging
     }
 
-    MARKETPLACES {
-        int id PK
-        string name UK
-    }
-
     PRODUCT_MARKETPLACE {
         int id PK
         int product_id FK
-        int marketplace_id FK
+        string marketplace_name
         decimal price
         string currency
         string unit_pack

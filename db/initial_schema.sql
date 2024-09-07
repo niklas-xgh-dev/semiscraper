@@ -1,4 +1,4 @@
--- Create products table
+-- Products table remains the same
 CREATE TABLE products (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
@@ -10,27 +10,21 @@ CREATE TABLE products (
     packaging VARCHAR(100)
 );
 
--- Create marketplaces table
-CREATE TABLE marketplaces (
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(255) UNIQUE NOT NULL
-);
-
--- Create product_marketplace table
+-- Modified product_marketplace table
 CREATE TABLE product_marketplace (
     id SERIAL PRIMARY KEY,
     product_id INTEGER REFERENCES products(id),
-    marketplace_id INTEGER REFERENCES marketplaces(id),
+    marketplace_name VARCHAR(255) NOT NULL,
     price DECIMAL(10, 2),
     currency VARCHAR(3),
     unit_pack VARCHAR(100),
     stock_status VARCHAR(100),
     lead_time VARCHAR(100),
     last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE (product_id, marketplace_id)
+    UNIQUE (product_id, marketplace_name)
 );
 
--- Create product_history table
+-- Product history table
 CREATE TABLE product_history (
     id SERIAL PRIMARY KEY,
     product_marketplace_id INTEGER REFERENCES product_marketplace(id),
@@ -41,18 +35,18 @@ CREATE TABLE product_history (
     recorded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Create index for product_history
+-- Index for efficient querying
+CREATE INDEX idx_product_marketplace_name ON product_marketplace(marketplace_name);
 CREATE INDEX idx_product_history_product_marketplace ON product_history(product_marketplace_id);
 
--- Create view for product history
+-- View for product history (simplified)
 CREATE VIEW product_history_view AS
 SELECT 
     ph.id AS history_id,
     p.id AS product_id,
     p.name AS product_name,
     p.mpn,
-    m.id AS marketplace_id,
-    m.name AS marketplace_name,
+    pm.marketplace_name,
     ph.price,
     ph.currency,
     ph.stock_status,
@@ -63,6 +57,4 @@ FROM
 JOIN 
     product_marketplace pm ON ph.product_marketplace_id = pm.id
 JOIN 
-    products p ON pm.product_id = p.id
-JOIN 
-    marketplaces m ON pm.marketplace_id = m.id;
+    products p ON pm.product_id = p.id;
