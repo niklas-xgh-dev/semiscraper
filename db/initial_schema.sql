@@ -1,4 +1,4 @@
--- Products table remains the same
+-- Products table
 CREATE TABLE products (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
@@ -10,7 +10,7 @@ CREATE TABLE products (
     packaging VARCHAR(100)
 );
 
--- Modified product_marketplace table
+-- Product_marketplace table
 CREATE TABLE product_marketplace (
     id SERIAL PRIMARY KEY,
     product_id INTEGER REFERENCES products(id),
@@ -39,7 +39,7 @@ CREATE TABLE product_history (
 CREATE INDEX idx_product_marketplace_name ON product_marketplace(marketplace_name);
 CREATE INDEX idx_product_history_product_marketplace ON product_history(product_marketplace_id);
 
--- View for product history (simplified)
+-- View for product history
 CREATE VIEW product_history_view AS
 SELECT 
     ph.id AS history_id,
