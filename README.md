@@ -4,6 +4,31 @@
 
 This project implements a modular web scraping framework designed to extract product information from multiple e-commerce websites. It utilizes Python and various libraries to fetch web pages, parse HTML content, and save the extracted data to CSV files.
 
+# Technology Stack
+
+```mermaid
+graph TD
+    A[Web Browser] -->|HTTP Requests| B[FastAPI]
+    B <-->|SQL Queries| C[(PostgreSQL)]
+    B -->|Renders| D[Jinja Templates]
+    D -->|HTML| A
+    E[Python Scraper] -->|Inserts Data| C
+    B <-->|Server-Side Logic| F[Python Backend]
+    G[HTMX] -->|AJAX Requests| B
+    H[AlchemySQL] -->|ORM| C
+    I[Pydantic] -->|Data Validation| B
+
+    style A fill:#f9f,stroke:#333,stroke-width:2px
+    style B fill:#bbf,stroke:#333,stroke-width:2px
+    style C fill:#dfd,stroke:#333,stroke-width:2px
+    style D fill:#fdd,stroke:#333,stroke-width:2px
+    style E fill:#ddf,stroke:#333,stroke-width:2px
+    style F fill:#ddf,stroke:#333,stroke-width:2px
+    style G fill:#ffd,stroke:#333,stroke-width:2px
+    style H fill:#ddf,stroke:#333,stroke-width:2px
+    style I fill:#ddf,stroke:#333,stroke-width:2px
+```
+
 ## Features
 
 - Modular design allowing easy addition of new scrapers
