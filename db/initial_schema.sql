@@ -5,9 +5,7 @@ CREATE TABLE products (
     mpn VARCHAR(100) UNIQUE NOT NULL,
     sku VARCHAR(100),
     description TEXT,
-    manufacturer VARCHAR(255),
-    package VARCHAR(100),
-    packaging VARCHAR(100)
+    manufacturer VARCHAR(255)
 );
 
 -- Product_marketplace table
@@ -21,7 +19,9 @@ CREATE TABLE product_marketplace (
     stock_status VARCHAR(100),
     lead_time VARCHAR(100),
     last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE (product_id, marketplace_name)
+    UNIQUE (product_id, marketplace_name),
+    package VARCHAR(100),
+    packaging VARCHAR(100)
 );
 
 -- Product history table
