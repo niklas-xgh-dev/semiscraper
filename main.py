@@ -5,6 +5,7 @@ import time
 import random
 from dotenv import load_dotenv
 from typing import Dict, List, Optional, Callable
+from db.db_ingestion import ingest_data  # Updated import
 
 def load_config(url_key: str, suffix_key: str) -> Dict[str, str]:
     load_dotenv()
@@ -73,11 +74,14 @@ def save_to_csv(data: List[Dict[str, str]], filename: str) -> None:
     df.to_csv(filename, index=False)
     print(f"Data saved to {filename}")
 
-def main(scraper_module, url_key: str, suffix_key: str):
+def main(scraper_module, url_key: str, suffix_key: str, marketplace_name: str):
     config = load_config(url_key, suffix_key)
     session = create_session()
     products = scrape_all_pages(session, config, scraper_module.scrape_page)
     save_to_csv(products, f"{scraper_module.__name__.split('_')[0]}_products.csv")
+    
+    # Ingest data into the database
+    ingest_data(products, marketplace_name)
 
 if __name__ == "__main__":
     # Import the specific scraper modules here
@@ -85,5 +89,5 @@ if __name__ == "__main__":
     import urlthree_scraper
 
     # Run both scrapers
-    main(urltwo_scraper, 'urltwo', 'urltwo_pagination_suffix')
-    main(urlthree_scraper, 'urlthree', 'urlthree_pagination_suffix')
+    main(urltwo_scraper, 'urltwo', 'urltwo_pagination_suffix', 'URLTwo')
+    main(urlthree_scraper, 'urlthree', 'urlthree_pagination_suffix', 'URLThree')
